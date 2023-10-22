@@ -1,5 +1,5 @@
 Prueba balanceo minikube
-
+```bash
 kubectl create deployment httpenv --image jpetazzo/httpenv -n default
 kubectl scale deployment httpenv --replicas=10
 kubectl expose deployment httpenv --port=8888
@@ -44,7 +44,6 @@ KUBE-SEP-ZKPJHK4EK7KBDKY4  all  --  0.0.0.0/0            0.0.0.0/0            /*
 KUBE-SEP-UBMIIKTDI7KAT5VC  all  --  0.0.0.0/0            0.0.0.0/0            /* default/httpenv -> 172.17.0.7:8888 */ statistic mode random probability 0.33333333349
 KUBE-SEP-YMPCBAVS4XKKAHS2  all  --  0.0.0.0/0            0.0.0.0/0            /* default/httpenv -> 172.17.0.8:8888 */ statistic mode random probability 0.50000000000
 KUBE-SEP-YGRPELBHAWQZOHR3  all  --  0.0.0.0/0            0.0.0.0/0            /* default/httpenv -> 172.17.0.9:8888 */
-
-
+```
 
 PROBAR EN EKS O K8S. ¿PARA EL COMANDO IPTABLES HAY QUE ENTRAR A UN NODO WORKER?
