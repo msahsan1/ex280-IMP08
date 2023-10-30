@@ -1,6 +1,7 @@
 # Resumen Taints y Tolerations
 
 > Probar comando en Openshift (creo que hat que agregar el adm).
+
 > Probar tolerations en deployment.
 
 ## Taints
