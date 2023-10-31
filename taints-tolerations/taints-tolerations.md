@@ -1,14 +1,10 @@
 # Resumen Taints y Tolerations
 
-> Probar comando en Openshift (creo que hat que agregar el adm).
-
-> Probar tolerations en deployment.
-
 ## Taints
-Los taints van al nodo, para hacer que aque los pods no tengan la toleration asocianda no se ejecuten en el nodo. Por defecto los pods no tienen tolerations.
+Los taints van al `nodo`, para hacer que aquellos pods que no tengan la toleration asocianda no se ejecuten en el nodo. Por defecto los pods no tienen tolerations.
 
 Hay 3 tipos de tains:
-- NoScehdule: No se programa la ejecución de ciertos pods en tal nodo.
+- NoSchedule: No se programa la ejecución de ciertos pods en tal nodo.
 - PreferNoSchedule: No se programa la ejecución de ciertos pods en tal nodo, pero no es 100% asegurado.
 - NoExecute: No se programa la ejecución de ciertos pods en tal nodo, y se eliminan aquellos que no tengan el toleration asociado.
 
@@ -21,6 +17,11 @@ Taints:             node-role.kubernetes.io/master:NoSchedule
 Para aplicar un taint a un nodo:
 ```sh
 kubectl taint nodes node1 <key>=<value>:<taint-effect>
+```
+
+Para Openshift.
+```sh
+oc adm taint nodes node1 <key>=<value>:<taint-effect>
 ```
 
 ## Tolerations
@@ -43,4 +44,42 @@ spec:
       value: "value"
       effect: "taint-effect"
 
+```
+
+
+Para un deployment.
+```sh
+oc explain deployment.spec.template.spec.tolerations
+```
+```
+FIELDS:
+   effect	<string>
+     Effect indicates the taint effect to match. Empty means match all taint
+     effects. When specified, allowed values are NoSchedule, PreferNoSchedule
+     and NoExecute.
+
+
+
+   key	<string>
+     Key is the taint key that the toleration applies to. Empty means match all
+     taint keys. If the key is empty, operator must be Exists; this combination
+     means to match all values and all keys.
+
+   operator	<string>
+     Operator represents a key's relationship to the value. Valid operators are
+     Exists and Equal. Defaults to Equal. Exists is equivalent to wildcard for
+     value, so that a pod can tolerate all taints of a particular category.
+
+
+
+   tolerationSeconds	<integer>
+     TolerationSeconds represents the period of time the toleration (which must
+     be of effect NoExecute, otherwise this field is ignored) tolerates the
+     taint. By default, it is not set, which means tolerate the taint forever
+     (do not evict). Zero and negative values will be treated as 0 (evict
+     immediately) by the system.
+
+   value	<string>
+     Value is the taint value the toleration matches to. If the operator is
+     Exists, the value should be empty, otherwise just a regular string.
 ```
