@@ -1,6 +1,6 @@
 # Resources
 
-Ejemplo de un deployment que levanta un pod de test con request y limits setados:
+Ejemplo de un deployment que levanta un pod de test con request y limits seteados:
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
