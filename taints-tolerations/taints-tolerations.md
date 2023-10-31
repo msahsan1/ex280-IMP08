@@ -13,19 +13,28 @@ Para ver lo taints que tiene asociado uno nodo. ejemplo master:
 kubectl describe node kubemaster | grep Taint
 Taints:             node-role.kubernetes.io/master:NoSchedule
 ```
+O para Openshift.
+oc describe node kubemaster | grep Taint
+Taints:             node-role.kubernetes.io/master:NoSchedule
+```
+> Nota: Si hay más de un taint, este comando solo mostrara el de la primera línea. Para ver todos sacar el `| grep Taint`.
 
 Para aplicar un taint a un nodo:
 ```sh
 kubectl taint nodes node1 <key>=<value>:<taint-effect>
 ```
 
-Para Openshift.
+O para Openshift.
 ```sh
 oc adm taint nodes node1 <key>=<value>:<taint-effect>
 ```
+- Nota: Se pueden aplicar taints sin value, es decir:
+```sh
+oc adm taint nodes node1 <key>:<taint-effect>
+```
 
 ## Tolerations
-Las tolerations van a los pods para permitir su ejecución en los nodos que tengan determinado taint. 
+Las tolerations van a los `pods` para permitir su ejecución en los nodos que tengan determinado taint. 
 
 Para aplicar un toleration a un pod hay que modificar el manifiesto.
 ```yaml
@@ -45,8 +54,9 @@ spec:
       effect: "taint-effect"
 
 ```
-
-
+```sh
+oc explain pod.spec.tolerations
+```
 Para un deployment.
 ```sh
 oc explain deployment.spec.template.spec.tolerations
@@ -82,4 +92,68 @@ FIELDS:
    value	<string>
      Value is the taint value the toleration matches to. If the operator is
      Exists, the value should be empty, otherwise just a regular string.
+```
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-pod
+  template:
+    metadata:
+      labels:
+        app: test-pod
+    spec:
+      containers:
+      - name: busybox-container
+        image: busybox
+        resources:
+          limits:
+            cpu: 50m
+            memory: 100Mi
+          requests:
+            cpu: 10m
+            memory: 50Mi
+        command: ["sleep", "infinity"]
+      tolerations:
+      - key: "nodo"
+        operator: "Equal"
+        value: "worker"
+        effect: "NoSchedule"
+```
+Y si el taint no tiene value:
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-pod
+  template:
+    metadata:
+      labels:
+        app: test-pod
+    spec:
+      containers:
+      - name: busybox-container
+        image: busybox
+        resources:
+          limits:
+            cpu: 50m
+            memory: 100Mi
+          requests:
+            cpu: 10m
+            memory: 50Mi
+        command: ["sleep", "infinity"]
+      tolerations:
+      - key: "nodo"
+        effect: "NoSchedule"
 ```
