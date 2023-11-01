@@ -1,32 +1,39 @@
-Prueba balanceo minikube
+# Prueba balanceo minikube.
+
+## Instalación de ingress
+Usamos repo helm de bitnami.
+
+https://artifacthub.io/packages/helm/bitnami/nginx-ingress-controller
+```bash
+helm install my-release oci://registry-1.docker.io/bitnamicharts/nginx-ingress-controller
+```
+## Prueba de ingress
+Desplegamos el servicio.
 ```bash
 kubectl create deployment httpenv --image jpetazzo/httpenv -n default
 kubectl scale deployment httpenv --replicas=10
 kubectl expose deployment httpenv --port=8888
-
+```
+Generamos 100 request al servicio.
+```bash
 for i in $(seq 100); do curl -s 10.99.85.244:8888 | jq "".HOSTNAME; done > salida.txt
-
-vagrant@ubuntu2204:~$ cat salida.txt | grep -c httpenv-7bdf7d4584-56c4g
-8
-vagrant@ubuntu2204:~$ cat salida.txt | grep -c httpenv-7bdf7d4584-6msbp
-7
-vagrant@ubuntu2204:~$ cat salida.txt | grep -c httpenv-7bdf7d4584-6qqq6
-13
-vagrant@ubuntu2204:~$ cat salida.txt | grep -c httpenv-7bdf7d4584-7pggx
-13
-vagrant@ubuntu2204:~$ cat salida.txt | grep -c httpenv-7bdf7d4584-clb45
-8
-vagrant@ubuntu2204:~$ cat salida.txt | grep -c httpenv-7bdf7d4584-gljpp
-7
-vagrant@ubuntu2204:~$ cat salida.txt | grep -c httpenv-7bdf7d4584-mdcnb
-13
-vagrant@ubuntu2204:~$ cat salida.txt | grep -c httpenv-7bdf7d4584-pvx5v
-12
-vagrant@ubuntu2204:~$ cat salida.txt | grep -c httpenv-7bdf7d4584-svvmv
-9
-vagrant@ubuntu2204:~$ cat salida.txt | grep -c httpenv-7bdf7d4584-vf5pq
-10
-
+```
+Contamos la cantidad de request en cada pod.
+```bash
+cat salida.txt | sort | uniq -c
+      5 "httpenv-769fb55cb-2ccxn"
+     13 "httpenv-769fb55cb-4577t"
+      8 "httpenv-769fb55cb-jnkpj"
+      9 "httpenv-769fb55cb-km7t8"
+     13 "httpenv-769fb55cb-kmv9r"
+     15 "httpenv-769fb55cb-ph8gg"
+     11 "httpenv-769fb55cb-prjc8"
+      9 "httpenv-769fb55cb-r7tt8"
+      8 "httpenv-769fb55cb-t9sdn"
+      9 "httpenv-769fb55cb-vclwp"
+```
+Para verificar la configuración de iptables.
+```bash
 vagrant@ubuntu2204:~$ sudo iptables -t nat -nL KUBE-SERVICES | grep 10.99.85.244
 KUBE-SVC-6ZVPY37LGINYSSPR  tcp  --  0.0.0.0/0            10.99.85.244         /* default/httpenv cluster IP */ tcp dpt:8888
 
@@ -45,5 +52,3 @@ KUBE-SEP-UBMIIKTDI7KAT5VC  all  --  0.0.0.0/0            0.0.0.0/0            /*
 KUBE-SEP-YMPCBAVS4XKKAHS2  all  --  0.0.0.0/0            0.0.0.0/0            /* default/httpenv -> 172.17.0.8:8888 */ statistic mode random probability 0.50000000000
 KUBE-SEP-YGRPELBHAWQZOHR3  all  --  0.0.0.0/0            0.0.0.0/0            /* default/httpenv -> 172.17.0.9:8888 */
 ```
-
-PROBAR EN EKS O K8S. ¿PARA EL COMANDO IPTABLES HAY QUE ENTRAR A UN NODO WORKER?
