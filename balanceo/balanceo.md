@@ -5,8 +5,42 @@ Usamos repo helm de bitnami.
 
 https://artifacthub.io/packages/helm/bitnami/nginx-ingress-controller
 ```bash
-helm install my-release oci://registry-1.docker.io/bitnamicharts/nginx-ingress-controller
+helm install my-release oci://registry-1.docker.io/bitnamicharts/nginx-ingress-controller --set service.type=NodePort
 ```
+Verificar con estos comandos:
+```bash
+export HTTP_NODE_PORT=$(kubectl --namespace default get services -o jsonpath="{.spec.ports[0].nodePort}" my-release-nginx-ingress-controller)
+export HTTPS_NODE_PORT=$(kubectl --namespace default get services -o jsonpath="{.spec.ports[1].nodePort}" my-release-nginx-ingress-controller)
+export NODE_IP=$(kubectl --namespace default get nodes -o jsonpath="{.items[0].status.addresses[1].address}")
+
+echo "Visit http://$NODE_IP:$HTTP_NODE_PORT to access your application via HTTP."
+echo "Visit https://$NODE_IP:$HTTPS_NODE_PORT to access your application via HTTPS."
+```
+Crear ingress.
+```bash
+kubectl apply -f ingress.yaml
+```
+Ver IP.
+```bash
+k get ingress
+NAME              CLASS    HOSTS              ADDRESS        PORTS   AGE
+example           nginx    minikube           192.168.49.2   80      18m
+```
+Editar archivo /etc/hosts, y agregar la línea IP -> minikube.
+```bash
+192.168.49.2      minikube
+```
+Tomar nota del puerto expuesto.
+```bash
+k get svc
+NAME                                                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+my-release-nginx-ingress-controller                   NodePort    10.110.106.248   <none>        80:30917/TCP,443:31221/TCP   22m
+```
+Verificar funcionamiento.
+```bash
+curl -s minikube:30917/ | jq "".HOSTNAME
+```
+
 ## Prueba de ingress
 Desplegamos el servicio.
 ```bash
