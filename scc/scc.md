@@ -34,7 +34,7 @@ spec:
         command: ["sleep", "infinity"]
 ```
 
-Importante: Aca lo improtante ee el `securityContext`:
+Importante: Aca lo improtante es el `securityContext`:
 ```yaml
     securityContext:
       privileged: True
