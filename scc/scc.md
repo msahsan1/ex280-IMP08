@@ -22,8 +22,8 @@ spec:
       containers:
       - name: busybox-container
         image: busybox
-		securityContext:
-		  privileged: True
+          securityContext:
+            privileged: True
         resources:
           limits:
             cpu: 50m
@@ -37,5 +37,5 @@ spec:
 Importante: Aca lo improtante ee el `securityContext`:
 ```yaml
     securityContext:
-		privileged: True
+      privileged: True
 ```
