@@ -34,8 +34,27 @@ spec:
         command: ["sleep", "infinity"]
 ```
 
-Importante: Aca lo improtante es el `securityContext`:
+> Nota: Aca lo improtante es el `securityContext`:
 ```yaml
     securityContext:
       privileged: True
 ```
+
+Levantar pod.
+```sh
+oc apply -f test-pod-deployment.yaml
+```
+Crear Service Acount.
+```sh
+oc create sa test-pod-sa
+```
+Aplicar los SCC a la SA.
+```sh
+oc amd policy add-scc-to-user priviliged -z test-pod-sa
+```
+Aplicar SA al deployment.
+```sh
+oc set sa deployment test-pod test-pod-sa
+```
+Verificar la regeneración del pod con `oc get pods`.
+Ingresar al pod con `oc rsh NOMBRE-POD` y ejecutar comandos root, como por ejemplo `apt update`.
