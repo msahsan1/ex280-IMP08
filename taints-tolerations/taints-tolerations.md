@@ -16,10 +16,11 @@ Taints:             node-role.kubernetes.io/master:NoSchedule
 O para Openshift.
 oc describe node kubemaster | grep Taint
 Taints:             node-role.kubernetes.io/master:NoSchedule
-```
+
 > Nota: Si hay más de un taint, este comando solo mostrara el de la primera línea. Para ver todos sacar el `| grep Taint`.
 
 Para aplicar un taint a un nodo:
+
 ```sh
 kubectl taint nodes node1 <key>=<value>:<taint-effect>
 ```
@@ -29,6 +30,7 @@ O para Openshift.
 oc adm taint nodes node1 <key>=<value>:<taint-effect>
 ```
 - Nota: Se pueden aplicar taints sin value, es decir:
+
 ```sh
 oc adm taint nodes node1 <key>:<taint-effect>
 ```
