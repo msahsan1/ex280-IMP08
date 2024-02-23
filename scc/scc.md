@@ -20,10 +20,10 @@ spec:
         app: test-pod
     spec:
       containers:
-      - name: busybox-container
-        image: busybox
-          securityContext:
-            privileged: True
+      - name: ubuntu
+        image: ubuntu
+        securityContext:
+          privileged: True
         resources:
           limits:
             cpu: 50m
@@ -50,7 +50,7 @@ oc create sa test-pod-sa
 ```
 Aplicar los SCC a la SA.
 ```sh
-oc amd policy add-scc-to-user priviliged -z test-pod-sa
+oc amd policy add-scc-to-user privileged -z test-pod-sa
 ```
 Aplicar SA al deployment.
 ```sh
